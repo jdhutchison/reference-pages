@@ -1,0 +1,7 @@
+baseURL = "https://hutch.id.au/ref/"
+languageCode = "en-us"
+title = "The Reference Section"
+pygmentsStyle = "solarized-light" # solarized-light, -dark or -dark256
+
+[params]
+  scheme = "preference"
