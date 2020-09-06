@@ -10,5 +10,5 @@ The project has two folders:
 
 **processors**: Python scripts to convert exported markdown. 
 
-**hugo**: Configuration and content for Hugo to run with. 
+**pages**: Configuration and content for Hugo to run with. 
 .
