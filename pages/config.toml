@@ -2,6 +2,20 @@ baseURL = "https://hutch.id.au/ref/"
 languageCode = "en-us"
 title = "The Reference Section"
 pygmentsStyle = "solarized-light" # solarized-light, -dark or -dark256
+Copyright = "© J. Hutchison, 2020"
 
 [params]
-  scheme = "preference"
+  Descripton = "All of the notes, code snippets, recipies and anything else I've written down..."
+  scheme = "light"
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ""
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = true
+    style = "monokai"
+    tabWidth = 2
