@@ -6,7 +6,7 @@
 ###                 MARKDOWN EXTRACT AND UPLOAD SCRIPT                      ###
 ###                                                                         ###
 ### Extracts markdown from Joplin, calls the processing script and then     ###
-### uploads to Git.                                                         ###
+### uploads to Git. THis script is to be run locally.                       ###
 ##  This script has no command line params.                                 ###
 ###############################################################################
 ###############################################################################
