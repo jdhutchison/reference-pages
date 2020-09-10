@@ -1,24 +1,47 @@
 import os
 import shutil
 
+###############################################################################
+###############################################################################
+###                                                                         ###
+###                   MARKDOWN PROCESSING SCRIPT                            ###
+###                                                                         ###
+### Converts Markdown exported from Joplin into Makrdown that Hugo can      ###
+### generate HTML from.                                                     ###
+###                                                                         ###
+###############################################################################
+###############################################################################
+
+# The root directory for the markdown source
 SRC_ROOT='/tmp/General'
 
+# The root directory for Hugo markdown
 HUGO_CONTENT_ROOT='/data/code/reference-pages/pages/content'
 
+# The prefix for the paths in the URLs 
 ONLINE_PATH='/ref/'
 
-def process_directory(relpath):
-    pass
 
 def kebab_case_file_path(original_path):
     """
-    Converts a filename (or any string really) into a kebab-case file name. 
+    Converts a filename (or any string really) into a kebab-case file name. Also removes underscores.
+
+    @param original_path (str) A relative path to convert.
+    @return str The converted path.
     """
     return original_path.lower().replace(' ', '-').replace('_', '')
 
 
 def add_front_matter(contents, weight):
     """
+    Processes the contents of a markdown file by:
+    a) Adding metdata data in YAML front matter format.
+    b) Removing a duplicate top level title if it exists, as Hugo will generate its own. s
+
+    @param contents (List[str]) The original contents of the file to be modified. 
+    @param weight (int) The page weight 
+    @return List[str] the modified markdown, one line per list entry. This list is not the same as the
+    contents parameter. 
     """
     new_contents = ['---']
     new_contents.append('title: ' + contents[0])
@@ -28,7 +51,7 @@ def add_front_matter(contents, weight):
     idx = 1
     while idx < len(contents):
         if contents[idx].startswith('==='):
-            del new_contents[-1]
+            del new_contents[-1] # Remove the duplicated title. 
             idx += 2 # Skip the blank line under the heading sig
         else: 
             new_contents.append(contents[idx])
@@ -38,6 +61,12 @@ def add_front_matter(contents, weight):
 
 def process_file(relpath, weight=1):
     """
+    Processes a markdown file by adding metadata, deleting the original file and writing the modified contents to
+    Hugo's content directory. 
+ 
+    
+    @param relpath (str) the relative (to the makdown root) path of this file. 
+    @param weight (int) the weight (or ranking in listings) of this page within its section. 
     """
     # Read file
     with open(os.path.join(SRC_ROOT, relpath)) as filein:
@@ -59,10 +88,17 @@ def process_file(relpath, weight=1):
     # Delete original file
     os.remove(os.path.join(SRC_ROOT, relpath))
 
-def generate_index_list_section(heading, entries, web_path, make_bold=False):
+def generate_index_list_section(entries, web_path, make_bold=False):
     """
+    Outputs a markdown list of web links from a list of directory entries. 
+
+    @param entries (List[str]) the entries for this list. 
+    @param web_path (str) the prefix for the path of an entry on the actual site. 
+    @param make_bold (bool) if the entry name should be displayed in bold. Defaults to false. 
+
+    @return List[str] the markdown for the list of entries. 
     """
-    lines_of_list = ['## ' + heading, '']
+    lines_of_list = []
     
     for entry in entries:
         title = entry.replace('_', '').replace('.md', '')
@@ -74,6 +110,11 @@ def generate_index_list_section(heading, entries, web_path, make_bold=False):
 
 def generate_index(relpath, directories, files):
     """
+    For a given directory generates the markdown that goes into that directory's _index.md file. 
+
+    @param relpath (str) the relative (to the makdown root) path of this directory.
+    @param directories (List[str]) the names of directories within this section. 
+    @param files (List[str]) the names of files within this directory. 
     """
     hugo_rel_path = kebab_case_file_path(relpath)
 
@@ -85,16 +126,16 @@ def generate_index(relpath, directories, files):
     if len(title):
         content.append('title: ' + title)
     content.append('weight: 0')
-    content.append('type: page')
+    content.append('type: section')
     content.append('---')
     content.append('')
 
     if len(directories):
-        content += generate_index_list_section('Sub-sections', directories, hugo_path, True)
+        content += generate_index_list_section(directories, web_path, True)
         content.append('')
 
     if len(files):
-          content += generate_index_list_section('Pages', files, web_path) 
+          content += generate_index_list_section(files, web_path) 
  
     with open(hugo_path + '/_index.md', 'w') as out:
         for line in content:
@@ -102,6 +143,12 @@ def generate_index(relpath, directories, files):
 
 def sort_entries_in_directory(abs_path):
     """
+    Reads entries in a directory, sorting them into sub-directories and files. These sets are
+    then sorted alphabetically. 
+
+    @param abs_path The absolute path of the directory to sort the entries for. 
+
+    @return Tuple(List[str], List[str]) the list of directories and files in a tuple.  
     """
     directories = []
     files = []
@@ -119,6 +166,9 @@ def sort_entries_in_directory(abs_path):
 
 def process_directory(relpath=''):
     """
+    Processes a directory of markdown files into Hugo ready markdown files. 
+
+    @param relpath (str) the relative (to the makdown root) path of this file. Defaults to empty, which is the root directory. 
     """
     abs_path = os.path.join(SRC_ROOT, relpath)
     os.mkdir(os.path.join(HUGO_CONTENT_ROOT, kebab_case_file_path(relpath)))
@@ -140,8 +190,6 @@ def process_directory(relpath=''):
     shutil.rmtree(abs_path)
 
 if __name__ == '__main__':
-    # Extract?
-
     # Delete the existing content
     shutil.rmtree(HUGO_CONTENT_ROOT)
  
