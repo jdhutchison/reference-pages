@@ -23,4 +23,20 @@ then
 Merging
 -------
 
-To merge another
+To merge one branch into another:
+```
+git checkout <merge from>
+git pull
+git checkout <merge to>
+git merge [--no-ff] <merge from>
+```
+
+Fold submodule into main repository
+-----------------------------------
+
+These commands will add a directory added as a submodile into the main repository:
+
+```
+git rm --cached <directory>
+git add <directory>
+```
