@@ -20,7 +20,7 @@ rm -r $WWW_FOLDER/*
 cd $HUGO_ROOT
 git clone https://github.com/jdhutchison/reference-pages.git
 cd reference-pages/pages
-hugo -D --theme solar-theme-hugo -d $WWW_FOLDER
+/usr/local/bin/hugo -D --theme solar-theme-hugo -d $WWW_FOLDER
 chown -R www-data:www-data $WWW_FOLDER
 
 # Can remove repo
